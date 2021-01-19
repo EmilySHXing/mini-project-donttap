@@ -25,9 +25,11 @@ extern void reset();
 
 int main(void)
 {
+    // Reset and random seed
     reset();
     srand(42);
-
+	
+    // Set up GPIO, peripherals, Timers
     setup_gpio();
     setup_spi1();
     setup_dma_c3();
@@ -35,6 +37,8 @@ int main(void)
     setup_dac();
     setup_tim2();
     setup_tim6();
+	
+    // Enter game loop
     while(1) {
         reset();
         game();
