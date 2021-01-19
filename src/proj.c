@@ -7,81 +7,43 @@
 #include <time.h>
 
 
-
+// Music notes frequencies
 #define L1 262
-
 #define L1hash 277
-
 #define L2 294
-
 #define L2hash 311
-
 #define L3 330
-
 #define L4 349
-
 #define L4hash 370
-
 #define L5 392
-
 #define L5hash 415
-
 #define L6 440
-
 #define L6hash 466
-
 #define L7 494
-
-
 #define M1 523
-
 #define M1hash 554
-
 #define M2 587
-
 #define M2hash 622
-
 #define M3 659
-
 #define M4 698
-
 #define M4hash 740
-
 #define M5 784
-
 #define M5hash 831
-
 #define M6 880
-
 #define M6hash 932
-
 #define M7 988
-
-
 #define H1 1046
-
 #define H1hash 1109
-
 #define H2 1175
-
 #define H2hash 1245
-
 #define H3 1318
-
 #define H4 1397
-
 #define H4hash 1480
-
 #define H5 1568
-
 #define H5hash 1661
-
 #define H6 1760
-
 #define H6hash  1865
-
 #define H7 1976
-
 
 // const wave table
 const short int wavetable[1000] = {
@@ -219,43 +181,32 @@ const int32_t step[16] =
 1174.66/50*(1<<16), 440.00/50*(1<<16), 659.25/50*(1<<16), 1760.00/50*(1<<16)};
 
 
-
+// music table for Für Elise
 const int musictable[211] = {
-
-H3, H2hash, H3, H2hash, H3, M7, H2hash, H1, M6, M1, M3, M6, M7, M3, M5hash, M7, H1, M3, H3, H2hash, //20
-
-H3, H2hash, H3, M7, H2hash, H1, M6, M1, M3, M6, M7, M3, H1, M7, M6, H3, H2hash, H3, H2hash, H3, M7, H2hash, H1, // 23
-
-M6, M1, M3, M6, M7, M3, M5hash, M7, H1, M3, H3, H2hash, H3, H2hash, H3, M7, H2hash, H1, M6, M1, M3, M6, // 22
-
-M7, M3, H1, M7, M6, M7, H1, H2, H3, M5, H4, H3, H2, M4, H3, H2, H1, M3, H2, H1, // 20
-
-M7, M3, H3, M3, H3, M3, H3, H2hash, H3, H2hash, H3, H2hash, H3, H2hash, H3, H2hash, H3, H2hash, H3, M7, H2hash, H1, // 22
-
-M6, M1, M3, M6, M7, M3, H1, M7, M6, M7, H1, H2, H3, M5, H4, H3, H2, M4, H3, H2, // 20
-
-H1, M3, H2, H1, M7, M3, H3, M3, H3, M3, H3, H2hash, H3, H2hash, H3, H2hash, H3, H2hash, H3, H2hash, // 20
-
-H3, H2hash, H3, M7, H2hash, H1, M6, M1, M3, M6, M7, M3, M5hash, M7, H1, M3, H3, H2hash, H3, H2hash, H3, M7, H2hash, H1, // 24
-
-M6, M1, M3, M6, M7, M3, H1, M7, M6, M1, M1, M1, M1, M4, M3, M2, M7, M6, // 18
-
-M6, M5, M4, M3, M2, M1, L7, L6, L6, L5, L6, L7, M1, M2, M3, M3, M3, M4, L6, M1, M2, L7 // 22
-
+H3, H2hash, H3, H2hash, H3, M7, H2hash, H1, M6, M1, M3, M6, M7, M3, M5hash, M7, H1, M3, H3, H2hash, 
+H3, H2hash, H3, M7, H2hash, H1, M6, M1, M3, M6, M7, M3, H1, M7, M6, H3, H2hash, H3, H2hash, H3, M7, H2hash, H1, 
+M6, M1, M3, M6, M7, M3, M5hash, M7, H1, M3, H3, H2hash, H3, H2hash, H3, M7, H2hash, H1, M6, M1, M3, M6,
+M7, M3, H1, M7, M6, M7, H1, H2, H3, M5, H4, H3, H2, M4, H3, H2, H1, M3, H2, H1,
+M7, M3, H3, M3, H3, M3, H3, H2hash, H3, H2hash, H3, H2hash, H3, H2hash, H3, H2hash, H3, H2hash, H3, M7, H2hash, H1,
+M6, M1, M3, M6, M7, M3, H1, M7, M6, M7, H1, H2, H3, M5, H4, H3, H2, M4, H3, H2,
+H1, M3, H2, H1, M7, M3, H3, M3, H3, M3, H3, H2hash, H3, H2hash, H3, H2hash, H3, H2hash, H3, H2hash,
+H3, H2hash, H3, M7, H2hash, H1, M6, M1, M3, M6, M7, M3, M5hash, M7, H1, M3, H3, H2hash, H3, H2hash, H3, M7, H2hash, H1,
+M6, M1, M3, M6, M7, M3, H1, M7, M6, M1, M1, M1, M1, M4, M3, M2, M7, M6,
+M6, M5, M4, M3, M2, M1, L7, L6, L6, L5, L6, L7, M1, M2, M3, M3, M3, M4, L6, M1, M2, L7
 };
 
 /*
- * INDEXING
+ * Indexing for 4x4 LED Matrix
  * 0   4   8   12
  * 1   5   9   13
  * 2   6   10  14
  * 3   7   11  15
  */
 
-int16_t pressed[16] = {0};   // 0 not pressed, pressed count to 100
+int16_t pressed[16] = {0};  // 0 not pressed, pressed count to 100
 int8_t light[16] = {0};     // 0 not lit, 1 lit
 int8_t point[16] = {0};     // 0 not lit, 1 lit
-int32_t offset = 0;   // offset for wavegen
+int32_t offset = 0;         // offset for wavegen
 int8_t history[16] = {0};   // history for key scan
 int8_t col = 0;             // current column to drive for key scan
 int16_t keyscan_ct = 0;     // key scan counter
@@ -268,6 +219,7 @@ int8_t status = 0;
 int16_t high = 0;
 int count_music = 0;
 
+// RGB LED states definition
 #define RED 0
 #define GREEN 1
 #define BLUE 2
@@ -279,7 +231,7 @@ void light_led(int8_t i, int8_t c);
 void clear_led(int8_t i);
 void saneryigo();
 
-
+// LCD display template
 uint16_t dispmem[34] = {
         0x080 + 0,
         0x220, 0x220, 0x220, 0x220, 0x220, 0x220, 0x220, 0x220,
@@ -324,6 +276,7 @@ void display2(const char *s) {
 }
 
 void countdown() {
+    // Game time count down
     char line[20];
     cd_ct++;
     if(cd_ct == 1000) {
@@ -338,7 +291,7 @@ void countdown() {
 }
 
 void keyscan() {
-    // keyscan
+    // Scan user presses
     int row = (GPIOA->IDR >> 5) & 0xf;
     int index = col << 2;
     history[index] = history[index] << 1;
@@ -356,7 +309,7 @@ void keyscan() {
 }
 
 int get_key_press() {
-    // detect key press
+    // Get key pressed by user
     while(1)
     {
         for(int i = 0; i < 16; i++) {
@@ -369,7 +322,7 @@ int get_key_press() {
 }
 
 int get_key_release() {
-    // detect key release
+    // Get key released by user
     while(1)
     {
         for(int i = 0; i < 16; i++) {
@@ -382,6 +335,7 @@ int get_key_release() {
 }
 
 int get_key_pressed() {
+    // Get the same key pressed and released by user
     int key = get_key_press();
     int key2;
     do {
@@ -392,6 +346,7 @@ int get_key_pressed() {
 }
 
 void saneryigo() {
+    // Display 3,2,1,go on LCD for start of game
     char line1[20];
     sprintf(line1, " ");
     display2(line1);
@@ -407,60 +362,8 @@ void saneryigo() {
     while(gen_ct < 1000);
 }
 
-void game() {
-    status = 0;
-    for (int k = 0; k < 16; k++) {
-        clear_led(k);
-    }
-    start_message(); // press the green button to start
-
-    saneryigo();
-    // generate 3 random LEDs to start
-    light_led(rand_gen(), GREEN);
-    light_led(rand_gen(), GREEN);
-    light_led(rand_gen(), GREEN);
-    char line[20];
-
-
-    cd_ct = 999;
-    status = 1;
-    sprintf(line, "SCORE: %d ", score);
-    display2(line);
-
-    int i;
-    int temp = 0;
-    while(count > 0) {
-        i = get_key_pressed();
-        if (i == -1) break;
-        // Increment timer
-        if (temp >= 30){
-            temp = 0;
-            count += 10;
-        }
-
-        if (point[i] != 1) {
-            clear_led(i);
-            break;
-        }
-        else {
-            count_music++;
-            if (count_music > 210) count_music = 0;
-            offset = 0;
-            pressed[i] = 1;
-            light_led(i, RED);
-            light_led(rand_gen(), GREEN); // light a new random LED
-            score++;
-            sprintf(line, "SCORE: %d ", score);
-            display2(line);
-            temp++;
-            point[i] = 0;
-            //light_led(i, GREEN);
-        }
-    }
-    gameover();
-}
-
 void start_message(){
+    // Display the start message on LCD
     char line1[20];
     char line2[20];
     sprintf(line1, "Press the BLUE ");
@@ -468,10 +371,12 @@ void start_message(){
     sprintf(line2, "button to START ");
     display2(line2);
 
-    //srand(gen_ct);
+    // Start at random position not on first column
     int start_button = rand() % 16;
     while (start_button < 4) start_button = rand() % 16;
     light_led(start_button, BLUE);
+    
+    // Wait for user to press start button
     int i;
     while(1){
         i = get_key_pressed();
@@ -483,17 +388,20 @@ void start_message(){
 }
 
 void gameover(){
-    // all red
+    // LED matrix all red
     status = 0;
     arr[0] = 0x8000;
     arr[1] = 0x4000;
     arr[2] = 0x2000;
     arr[3] = 0x1000;
 
+    // Display message on LCD
     char line1[20];
     sprintf(line1, "GAME OVER");
     display1(line1);
     int i = 0;
+        
+    // If best score, display on LCD
     if (score > high) {
         high = score;
         char line1[20], line2[20];
@@ -502,6 +410,8 @@ void gameover(){
         display1(line1);
         display2(line2);
     }
+        
+    // LED matrix blink
     while (i < 9) {
         if(gen_ct >= 700){
             i++;
@@ -515,7 +425,7 @@ void gameover(){
     }
 }
 
-// generate a random number each time
+// Generate a random number [0,15] each time
 int rand_gen(){
     //srand(gen_ct);
     int number;
@@ -526,6 +436,7 @@ int rand_gen(){
     return number;
 }
 
+// Scan key press and increment counter at each interrupt
 void TIM6_DAC_IRQHandler(void) {
     TIM6->SR &= ~TIM_SR_UIF;
     keyscan();
@@ -558,6 +469,7 @@ void TIM2_IRQHandler(void) {
     DAC->DHR12R1 = sample;
 }
 
+// Light LED i with color c
 void light_led(int8_t i, int8_t c) {
     light[i] = 1;
     point[i] = 1;
@@ -613,6 +525,7 @@ void light_led(int8_t i, int8_t c) {
     }
 }
 
+// Clear LED i
 void clear_led(int8_t i) {
     light[i] = 0;
     point[i] = 0;
@@ -668,6 +581,7 @@ void clear_led(int8_t i) {
     }
 }
 
+// Reset all variables
 void reset() {
     int i;
     for (i=0; i<16; i++) {
@@ -686,4 +600,61 @@ void reset() {
     cd_ct = 0;
     count = 11;
     score = 0;
+}
+
+void game() {
+    // Main game loop
+    status = 0;
+    // Clear all lit leds
+    for (int k = 0; k < 16; k++) {
+        clear_led(k);
+    }
+    start_message(); // press the blue button to start
+
+    saneryigo();
+    // generate 3 random LEDs to start
+    light_led(rand_gen(), GREEN);
+    light_led(rand_gen(), GREEN);
+    light_led(rand_gen(), GREEN);
+    char line[20];
+
+
+    cd_ct = 999;
+    status = 1;
+    sprintf(line, "SCORE: %d ", score);
+    display2(line);
+
+    int i;
+    int temp = 0;
+    while(count > 0) {
+        i = get_key_pressed();
+        if (i == -1) break;
+            
+        // Increment timer when 30 notes pressed successfully
+        if (temp >= 30){
+            temp = 0;
+            count += 10;
+        }
+        
+        // Game over if wrong press
+        if (point[i] != 1) {
+            clear_led(i);
+            break;
+        }
+        // Handle score and next notes if successful press
+        else {
+            count_music++;
+            if (count_music > 210) count_music = 0;
+            offset = 0;
+            pressed[i] = 1;
+            light_led(i, RED);
+            light_led(rand_gen(), GREEN); // light a new random LED
+            score++;
+            sprintf(line, "SCORE: %d ", score);
+            display2(line);
+            temp++;
+            point[i] = 0;
+        }
+    }
+    gameover();
 }
